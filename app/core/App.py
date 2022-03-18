@@ -36,8 +36,8 @@ class App:
             for middleware in self.__middlewares:
                 if middleware:
                     app.add_middleware(middleware_class=middleware[0])
-                    if middleware[1]:
-                        app.add_middleware(middleware_class=middleware[0], options=middleware[1:])
+                    if middleware[1]:  # если есть другие аргументы
+                        app.add_middleware(middleware_class=middleware[0], **middleware[1])
         self.add_validation_exception_handler(app)  # fix прикола fastapi
         # add all routes in app
         if self.routes:
@@ -55,5 +55,5 @@ class App:
         async def validation_exception_handler(r: Request, e: RequestValidationError):
             return ResponseException.validation_error(r, e)
 
-    def add_middleware(self, middleware: type, **options: typing.Any):
-        self.__middlewares.append([middleware, options])
+    def add_middleware(self, middleware: type, **kwargs):
+        self.__middlewares.append([middleware, kwargs])
