@@ -20,7 +20,6 @@ class AppConfig:
         self.exception_handlers: dict = {
                 422: ResponseException.validation_error, # Не работает (((((
                 404: ResponseException.not_found,
+                403: ResponseException.forbidden,
                 501: ResponseException.not_impl,
             }
-
-

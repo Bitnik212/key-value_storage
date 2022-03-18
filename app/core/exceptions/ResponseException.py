@@ -45,3 +45,7 @@ class ResponseException(Enum):
             data = {}
             info = "Ошибка обработки валидатора"
         return ResponseBuilder().result(info=info, data=data, status=422)
+
+    @staticmethod
+    def forbidden(r: Request, e: HTTPException) -> JSONResponse:
+        return ResponseBuilder().result(data={}, info=e.detail, status=e.status_code)
