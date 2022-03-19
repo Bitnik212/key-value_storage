@@ -2,10 +2,9 @@ from enum import Enum
 
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
-from app.core.middlewares import AppMiddleware
+from app.ServerConfig import ServerConfig
 from app.core.App import App
 from app.core.AppConfig import AppConfig
-from app.middlewares.JWTMiddleware import JWTMiddleware
 from app.routes import ServerRoutes
 
 
@@ -14,18 +13,16 @@ class Server(App):
     def __init__(self):
         super().__init__()
         self.routes: id(Enum) = ServerRoutes
+        self.server_config = ServerConfig()
         self.config = self._configure()
         self.debug: bool = False
         self.add_middleware(TrustedHostMiddleware, allowed_hosts=["*"])
 
-    @staticmethod
-    def _configure() -> AppConfig:
+    def _configure(self) -> AppConfig:
         app = AppConfig()
-        app.title = "KeyWord Storage"
-        app.version = "0.0.1"
-        app.mount_path = "/"
-        app.servers = [
-            {"url": "http://0.0.0.0:8000/", "description": "Development server"},
-        ]
+        app.title = self.server_config.application_title
+        app.version = self.server_config.application_version
+        app.mount_path = self.server_config.application_mount_path
+        app.servers = []
         return app
 
