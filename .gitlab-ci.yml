@@ -1,6 +1,6 @@
 variables:
   port: "8000"
-  container_name: "$CI_PROJECT_NAME_v$CI_COMMIT_TAG_$CI_PIPELINE_IID"
+  container_name: "$CI_PROJECT_NAME_$CI_PIPELINE_IID"
   image_tag: $CI_REGISTRY_IMAGE/dev:$container_name
   image_tag_latest: $CI_REGISTRY_IMAGE/dev:latest
 
@@ -17,12 +17,12 @@ create-and-push-docker-image-job:
   stage: prepare
   before_script:
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+  script:
+    - echo $image_tag
     - cp $env .env
     - cp $public_key publickey.pem
     - ssh-keygen -m PKCS8 -f publickey.pem -i > publickey.pub
     - cp $mongodb_key mongodb.pem
-  script:
-    - echo $image_tag
     - docker login -u $CI_REGISTRY_USER -p $personal_access_token $CI_REGISTRY
     - docker build -f deploy/docker/Dockerfile -t $image_tag -t $image_tag_latest . 
     - docker push $image_tag && docker push $image_tag_latest
