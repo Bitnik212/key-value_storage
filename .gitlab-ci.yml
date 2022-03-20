@@ -18,6 +18,8 @@ create-and-push-docker-image-job:
   before_script:
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
   script:
+    - echo $CI_PROJECT_NAME && echo $CI_PIPELINE_IID
+    - echo $container_name
     - echo $image_tag
     - cp $env .env
     - cp $public_key publickey.pem
