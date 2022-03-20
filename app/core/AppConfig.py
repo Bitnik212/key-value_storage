@@ -19,7 +19,9 @@ class AppConfig:
         self.openapi_prefix: str = ""
         self.exception_handlers: dict = {
                 422: ResponseException.validation_error, # Не работает (((((
+                400: ResponseException.bad_request,
                 404: ResponseException.not_found,
                 403: ResponseException.forbidden,
+                500: ResponseException.server_error,
                 501: ResponseException.not_impl,
             }

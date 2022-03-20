@@ -11,11 +11,11 @@ class ResponseException(Enum):
 
     @staticmethod
     def not_found(r: Request, e: HTTPException) -> JSONResponse:
-        return ResponseBuilder().not_found()
+        return ResponseBuilder.not_found()
 
     @staticmethod
     def not_impl(r: Request, e: HTTPException) -> JSONResponse:
-        return ResponseBuilder().not_impl()
+        return ResponseBuilder.not_impl()
 
     @staticmethod
     def handle(r: Request, e: HTTPException) -> JSONResponse:
@@ -23,7 +23,7 @@ class ResponseException(Enum):
             data = dict(e.args)
         except:
             data = r.body()
-        return ResponseBuilder().result(info=str(e.detail), data=data, status=e.status_code)
+        return ResponseBuilder.result(info=str(e.detail), data=data, status=e.status_code)
 
     @staticmethod
     def validation_error(r: Request, e: RequestValidationError) -> JSONResponse:
@@ -44,8 +44,17 @@ class ResponseException(Enum):
         except:
             data = {}
             info = "Ошибка обработки валидатора"
-        return ResponseBuilder().result(info=info, data=data, status=422)
+        return ResponseBuilder.result(info=info, data=data, status=422)
 
     @staticmethod
     def forbidden(r: Request, e: HTTPException) -> JSONResponse:
-        return ResponseBuilder().result(data={}, info=e.detail, status=e.status_code)
+        return ResponseBuilder.result(data={}, info=e.detail, status=e.status_code)
+
+    @staticmethod
+    def bad_request(r: Request, e: HTTPException) -> JSONResponse:
+        return ResponseBuilder.result(data={}, info=e.detail, status=e.status_code)
+
+    @staticmethod
+    def server_error(r: Request, e: HTTPException) -> JSONResponse:
+        return ResponseBuilder.result(data={}, info=e.detail, status=e.status_code)
+
