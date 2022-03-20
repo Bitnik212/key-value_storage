@@ -1,8 +1,9 @@
 from enum import Enum
 
-from app.routes.StorageRoutes import StorageRoutes
+from app.routes import AnonStorageRoutes
+from app.routes import StorageRoutes
 
 
 class ServerRoutes(Enum):
-    signIn = StorageRoutes.router
-
+    storage = StorageRoutes.router
+    anon_storage = AnonStorageRoutes.router
