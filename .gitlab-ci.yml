@@ -24,7 +24,7 @@ create-and-push-docker-image-job:
   script:
     - echo $image_tag
     - docker login -u $CI_REGISTRY_USER -p $personal_access_token $CI_REGISTRY
-    - docker build -f src/main/docker/Dockerfile.jvm -t $image_tag -t $image_tag_latest . 
+    - docker build -f deploy/docker/Dockerfile -t $image_tag -t $image_tag_latest . 
     - docker push $image_tag && docker push $image_tag_latest
 
 
