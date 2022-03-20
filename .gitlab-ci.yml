@@ -1,0 +1,43 @@
+variables:
+  port: "8000"
+  container_name: "$CI_PROJECT_NAME_v$CI_COMMIT_TAG_$CI_PIPELINE_IID"
+  image_tag: $CI_REGISTRY_IMAGE/dev:$container_name
+  image_tag_latest: $CI_REGISTRY_IMAGE/dev:latest
+
+stages:
+  - prepare
+  - deploy
+
+
+create-and-push-docker-image-job:
+  tags:
+    - docker
+  only:
+    - deploy/dev
+  stage: prepare
+  before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - cp $env .env
+    - cp $public_key publickey.pem
+    - ssh-keygen -m PKCS8 -f publickey.pem -i > publickey.pub
+    - cp $mongodb_key mongodb.pem
+  script:
+    - echo $image_tag
+    - docker login -u $CI_REGISTRY_USER -p $personal_access_token $CI_REGISTRY
+    - docker build -f src/main/docker/Dockerfile.jvm -t $image_tag -t $image_tag_latest . 
+    - docker push $image_tag && docker push $image_tag_latest
+
+
+deploy-job:
+  stage: deploy
+  only:
+    - deploy/dev
+  before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - mkdir -p ~/.ssh && touch ~/.ssh/config
+    - eval $(ssh-agent -s)
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - echo "$ssh_private_key" | tr -d '\r' | ssh-add -
+    - cat $ssh_config >> ~/.ssh/config
+  script:
+    - ssh deployServer -o StrictHostKeyChecking=no "bash /home/deploy/check_port.sh $port && docker login -u $CI_REGISTRY_USER -p $personal_access_token $CI_REGISTRY && docker pull $image_tag_latest && docker run -d -p $external_port:$port --restart=always --name $container_name $image_tag_latest"
