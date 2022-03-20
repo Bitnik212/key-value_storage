@@ -13,7 +13,7 @@ create-and-push-docker-image-job:
   tags:
     - docker
   only:
-    - deploy/dev
+    - deploy/develop
   stage: prepare
   before_script:
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
@@ -31,7 +31,7 @@ create-and-push-docker-image-job:
 deploy-job:
   stage: deploy
   only:
-    - deploy/dev
+    - deploy/develop
   before_script:
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
     - mkdir -p ~/.ssh && touch ~/.ssh/config
