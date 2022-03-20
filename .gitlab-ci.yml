@@ -1,6 +1,6 @@
 variables:
   port: "8000"
-  container_name: "$CI_PROJECT_NAME_dev_$CI_PIPELINE_IID"
+  container_name: "$CI_PROJECT_NAME-$CI_PIPELINE_IID"
   image_tag: $CI_REGISTRY_IMAGE/dev:$container_name
   image_tag_latest: $CI_REGISTRY_IMAGE/dev:latest
 
