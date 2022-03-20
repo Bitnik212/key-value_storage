@@ -1,4 +1,4 @@
-class AppRoutes:
+class AppGlobalRoutes:
     """
     Класс для роутов подприложения
     """

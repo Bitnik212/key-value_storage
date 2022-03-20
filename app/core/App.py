@@ -1,19 +1,17 @@
-import typing
-
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from starlette.requests import Request
 
 from app.core.exceptions.ResponseException import ResponseException
 from app.core.AppConfig import AppConfig
-from app.core.AppRoutes import AppRoutes
+from app.core.AppGlobalRoutes import AppGlobalRoutes
 
 
 class App:
 
     def __init__(self):
         self.config: AppConfig or None = None
-        self.routes: AppRoutes or None = None
+        self.routers: AppGlobalRoutes or None = None
         self.__middlewares = [[]]
 
     def _instance(self) -> FastAPI:
@@ -40,8 +38,8 @@ class App:
                         app.add_middleware(middleware_class=middleware[0], **middleware[1])
         self.add_validation_exception_handler(app)  # fix прикола fastapi
         # add all routes in app
-        if self.routes:
-            for router in self.routes:
+        if self.routers:
+            for router in self.routers:
                 if router:
                     app.include_router(router.value)
         return app
@@ -57,3 +55,4 @@ class App:
 
     def add_middleware(self, middleware: type, **kwargs):
         self.__middlewares.append([middleware, kwargs])
+
