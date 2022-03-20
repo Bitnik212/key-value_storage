@@ -16,7 +16,10 @@ class JWTUtil:
     HEADER_ALG_NAME = "alg"
     DATA_EXPIRATION_NAME = "exp"
     DATA_ISSUER_NAME = "iss"
+    DATA_USER_ID_NAME = "sub"
     ALL_HOSTS = "*"
+    TOKEN_EXPIRED = "Token expired"
+    ISSUER_NOT_IN_ALLOWED = "Issuer not in allowed list"
 
     def __init__(self):
         self.env = ServerConfig()
@@ -53,11 +56,11 @@ class JWTUtil:
 
     def check_expiration(self, token: dict[str, Any]):
         if self.is_expired(token):
-            raise InvalidTokenError("Token expired")
+            raise InvalidTokenError(self.TOKEN_EXPIRED)
 
     def check_allowed_issuer(self, token: dict[str, Any]):
         if not self.is_allowed_issuer(token):
-            raise InvalidIssuerError("Issuer not in allowed list")
+            raise InvalidIssuerError(self.ISSUER_NOT_IN_ALLOWED)
 
     def is_allowed_issuer(self, token: dict[str, Any]) -> bool:
         issuer = str(token[self.DATA_ISSUER_NAME])
@@ -90,3 +93,6 @@ class JWTUtil:
             if correct_count == len(splited_wildcard[wildcard_index+1:]):
                 correct = True
         return correct
+
+    def get_user_id(self, token: str) -> int:
+        return int(self.decode_jwt(token)[self.DATA_USER_ID_NAME])
