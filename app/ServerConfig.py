@@ -3,6 +3,13 @@ from pathlib import Path
 
 
 class ServerConfig:
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(ServerConfig, cls).__new__(cls)
+        return cls._instance
+
     def __init__(self):
         self.ENV_FILENAME = ".env"
         self.env_file_path = self.project_root_folder / self.ENV_FILENAME
