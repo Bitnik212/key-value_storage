@@ -73,7 +73,7 @@ class ServerConfig:
                 else:
                     raise FileNotFoundError("Не найден файл сертификата (MONGO_CERTIFICATE_PATH)")
                 return connection
-            elif raw_cert_path == "":
+            elif raw_cert_path == "" or raw_user != "":
                 connection["port"] = raw_port
                 connection["user"] = raw_user
                 connection["password"] = raw_password
