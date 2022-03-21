@@ -26,7 +26,7 @@ async def set(
     key: str = Query(..., description="Ключ"),
     value: dict = Body(..., description="Значение")
     ):
-    await repository.set(storage_id=storage_id, key=key, value=value)
+    await repository.set(storage_id=storage_id, key=key, value=value, is_anon=True)
     return ResponseBuilder.success()
 
 
@@ -40,7 +40,7 @@ async def get(
         storage_id: int = Query(..., description="Просто id по которому можно получить данные"),
         key: str = Query(..., description="Ключ")
 ):
-    result = await repository.get(storage_id=storage_id, key=key)
+    result = await repository.get(storage_id=storage_id, key=key, is_anon=True)
     if result is None:
         return ResponseBuilder.not_found()
     return ResponseBuilder.result(data=result)
@@ -56,7 +56,18 @@ async def delete(
         storage_id: int = Query(..., description="Просто id по которому можно получить данные"),
         key: str = Query(..., description="Ключ")
 ):
-    result = await repository.delete(storage_id=storage_id, key=key)
+    result = await repository.delete(storage_id=storage_id, key=key, is_anon=True)
     if result is None:
         return ResponseBuilder.not_found()
     return ResponseBuilder.result(data=result)
+
+
+@router.get(
+    path="/id/random",
+    responses=HTTPErrors().errors,
+    tags=TAGS,
+    summary="Получить уникальный storage id",
+)
+async def get_storage_id():
+    result = await repository.get_random_anon_storage_id()
+    return ResponseBuilder.result(data={"id": result})
